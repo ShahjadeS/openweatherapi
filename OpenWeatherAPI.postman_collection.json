@@ -1,0 +1,987 @@
+{
+	"info": {
+		"_postman_id": "ecc3f0e5-cb36-41da-b1a1-4a3276aaf080",
+		"name": "OpenWeatherAPI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33823745"
+	},
+	"item": [
+		{
+			"name": "Get Weather Data - Valid Lat/Lon",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test if the status code is 200 (Success)",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Test if response format is JSON",
+							"pm.test(\"Response is JSON\", function () {",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"// Test if response contains weather data",
+							"pm.test(\"Response contains weather data\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"weather\");",
+							"    pm.expect(jsonData).to.have.property(\"main\");",
+							"    pm.expect(jsonData.main).to.have.property(\"temp\");",
+							"    pm.expect(jsonData.main).to.have.property(\"humidity\");",
+							"    pm.expect(jsonData.sys).to.have.property(\"country\");",
+							"    pm.expect(jsonData).to.have.property(\"name\");",
+							"});",
+							"",
+							"// Check if the coordinates in response match the input",
+							"pm.test(\"Coordinates in response match input\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.coord.lat).to.be.closeTo(37.7749, 0.1); // Allow a small margin (+ OR -)",
+							"    pm.expect(jsonData.coord.lon).to.be.closeTo(-122.4194, 0.1);",
+							"});",
+							"",
+							"// Parse JSON response",
+							"var jsonData = pm.response.json();",
+							"",
+							"// Display the value of 'weather' property in the console",
+							"console.log(\"Weather:\", jsonData.weather);",
+							"",
+							"// Display temperature and humidity in the console",
+							"if (jsonData.main) {",
+							"    console.log(\"Temperature:\", jsonData.main.temp);",
+							"    console.log(\"Humidity:\", jsonData.main.humidity);",
+							"} else {",
+							"    console.log(\"Warning: 'main' property is missing in the response.\");",
+							"}",
+							"",
+							"// Display latitude and longitude values in the console",
+							"if (jsonData.coord) {",
+							"    console.log(\"Latitude:\", jsonData.coord.lat);",
+							"    console.log(\"Longitude:\", jsonData.coord.lon);",
+							"} else {",
+							"    console.log(\"Warning: 'coord' property is missing in the response.\");",
+							"}",
+							"",
+							"// Display the country and name values if they are present",
+							"if (jsonData.sys && jsonData.sys.country) {",
+							"    console.log(\"Country:\", jsonData.sys.country);",
+							"} else {",
+							"    console.log(\"Warning: 'country' property is missing in the response.\");",
+							"}",
+							"if (jsonData.name) {",
+							"    console.log(\"City Name:\", jsonData.name);",
+							"} else {",
+							"    console.log(\"Warning: 'name' property is missing in the response.\");",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{OpenWeatherBaseURI}}?lat=37.7749&lon=-122.4194&appid=f02c145f34284f74189fe953e73412a1",
+					"host": [
+						"{{OpenWeatherBaseURI}}"
+					],
+					"query": [
+						{
+							"key": "lat",
+							"value": "37.7749"
+						},
+						{
+							"key": "lon",
+							"value": "-122.4194"
+						},
+						{
+							"key": "appid",
+							"value": "f02c145f34284f74189fe953e73412a1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Weather Data - Invalid Latitude",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test if the status code is 400 (Bad Request)",
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"// Test if response format is JSON",
+							"pm.test(\"Response is JSON\", function () {",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"// Test if response contains an error message about latitude",
+							"pm.test(\"Error message indicates wrong latitude\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"message\");",
+							"    pm.expect(jsonData.message.toLowerCase()).to.include(\"wrong latitude\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{OpenWeatherBaseURI}}?lat=-98&lon=-122.4194&appid=f02c145f34284f74189fe953e73412a1",
+					"host": [
+						"{{OpenWeatherBaseURI}}"
+					],
+					"query": [
+						{
+							"key": "lat",
+							"value": "-98"
+						},
+						{
+							"key": "lon",
+							"value": "-122.4194"
+						},
+						{
+							"key": "appid",
+							"value": "f02c145f34284f74189fe953e73412a1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Weather Data - Invalid Logitude",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test if the status code is 400 (Bad Request)",
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"// Test if response format is JSON",
+							"pm.test(\"Response is JSON\", function () {",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"// Test if response contains an error message about latitude",
+							"pm.test(\"Error message indicates wrong longitude\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"message\");",
+							"    pm.expect(jsonData.message.toLowerCase()).to.include(\"wrong longitude\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{OpenWeatherBaseURI}}?lat=37.7749&lon=-182.52&appid=f02c145f34284f74189fe953e73412a1",
+					"host": [
+						"{{OpenWeatherBaseURI}}"
+					],
+					"query": [
+						{
+							"key": "lat",
+							"value": "37.7749"
+						},
+						{
+							"key": "lon",
+							"value": "-182.52"
+						},
+						{
+							"key": "appid",
+							"value": "f02c145f34284f74189fe953e73412a1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Weather Data - Boundary Latitude Values (Case_1)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test if the status code is 200 (Success)",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Test if response format is JSON",
+							"pm.test(\"Response is JSON\", function () {",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"// // Test if response contains weather data",
+							"// pm.test(\"Response contains weather data\", function () {",
+							"//     var jsonData = pm.response.json();",
+							"//     pm.expect(jsonData).to.have.property(\"weather\");",
+							"//     pm.expect(jsonData).to.have.property(\"main\");",
+							"//     pm.expect(jsonData.main).to.have.property(\"temp\");",
+							"//     pm.expect(jsonData.main).to.have.property(\"humidity\");",
+							"//     pm.expect(jsonData.sys).to.have.property(\"country\");",
+							"//     pm.expect(jsonData).to.have.property(\"name\");",
+							"// });",
+							"",
+							"// Parse JSON response",
+							"var jsonData = pm.response.json();",
+							"",
+							"// Test if response contains weather data",
+							"pm.test(\"Response contains weather data\", function () {",
+							"    pm.expect(jsonData).to.have.property(\"weather\");",
+							"    pm.expect(jsonData).to.have.property(\"main\");",
+							"    pm.expect(jsonData.main).to.have.property(\"temp\");",
+							"    pm.expect(jsonData.main).to.have.property(\"humidity\");",
+							"",
+							"    // Check for the presence of 'country' in 'sys'",
+							"    if (jsonData.sys && jsonData.sys.hasOwnProperty(\"country\")) {",
+							"        pm.expect(jsonData.sys.country).to.be.a(\"string\");",
+							"    } else {",
+							"        console.log(\"Warning: 'country' property is missing in the response.\");",
+							"    }",
+							"",
+							"    // Check for the presence of 'name'",
+							"    if (jsonData.name) {",
+							"        pm.expect(jsonData.name).to.be.a(\"string\");",
+							"    } else {",
+							"        console.log(\"Warning: 'name' property value is missing in the response.\");",
+							"    }",
+							"});",
+							"",
+							"// Check if the coordinates in response match the input",
+							"pm.test(\"Coordinates in response match input\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.coord.lat).to.be.closeTo(90, 0.1); // Allow a small margin (+ OR -)",
+							"    pm.expect(jsonData.coord.lon).to.be.closeTo(-122.4194, 0.1);",
+							"});",
+							"",
+							"// Parse JSON response",
+							"var jsonData = pm.response.json();",
+							"",
+							"// Display the value of 'weather' property in the console",
+							"console.log(\"Weather:\", jsonData.weather);",
+							"",
+							"// Display temperature and humidity in the console",
+							"if (jsonData.main) {",
+							"    console.log(\"Temperature:\", jsonData.main.temp);",
+							"    console.log(\"Humidity:\", jsonData.main.humidity);",
+							"} else {",
+							"    console.log(\"Warning: 'main' property is missing in the response.\");",
+							"}",
+							"",
+							"// Display latitude and longitude values in the console",
+							"if (jsonData.coord) {",
+							"    console.log(\"Latitude:\", jsonData.coord.lat);",
+							"    console.log(\"Longitude:\", jsonData.coord.lon);",
+							"} else {",
+							"    console.log(\"Warning: 'coord' property is missing in the response.\");",
+							"}",
+							"",
+							"// Display the country and name values if they are present",
+							"if (jsonData.sys && jsonData.sys.country) {",
+							"    console.log(\"Country:\", jsonData.sys.country);",
+							"} else {",
+							"    console.log(\"Warning: 'country' property is missing in the response.\");",
+							"}",
+							"if (jsonData.name) {",
+							"    console.log(\"City Name:\", jsonData.name);",
+							"} else {",
+							"    console.log(\"Warning: 'name' property value is missing in the response.\");",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{OpenWeatherBaseURI}}?lat=90&lon=-122.4194&appid=f02c145f34284f74189fe953e73412a1",
+					"host": [
+						"{{OpenWeatherBaseURI}}"
+					],
+					"query": [
+						{
+							"key": "lat",
+							"value": "90"
+						},
+						{
+							"key": "lon",
+							"value": "-122.4194"
+						},
+						{
+							"key": "appid",
+							"value": "f02c145f34284f74189fe953e73412a1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Weather Data - Boundary Latitude Values (Case_2)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test if the status code is 200 (Success)",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Test if response format is JSON",
+							"pm.test(\"Response is JSON\", function () {",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"// // Test if response contains weather data",
+							"// pm.test(\"Response contains weather data\", function () {",
+							"//     var jsonData = pm.response.json();",
+							"//     pm.expect(jsonData).to.have.property(\"weather\");",
+							"//     pm.expect(jsonData).to.have.property(\"main\");",
+							"//     pm.expect(jsonData.main).to.have.property(\"temp\");",
+							"//     pm.expect(jsonData.main).to.have.property(\"humidity\");",
+							"//     pm.expect(jsonData.sys).to.have.property(\"country\");",
+							"//     pm.expect(jsonData).to.have.property(\"name\");",
+							"// });",
+							"",
+							"// Parse JSON response",
+							"var jsonData = pm.response.json();",
+							"",
+							"// Test if response contains weather data",
+							"pm.test(\"Response contains weather data\", function () {",
+							"    pm.expect(jsonData).to.have.property(\"weather\");",
+							"    pm.expect(jsonData).to.have.property(\"main\");",
+							"    pm.expect(jsonData.main).to.have.property(\"temp\");",
+							"    pm.expect(jsonData.main).to.have.property(\"humidity\");",
+							"",
+							"    // Check for the presence of 'country' in 'sys'",
+							"    if (jsonData.sys && jsonData.sys.hasOwnProperty(\"country\")) {",
+							"        pm.expect(jsonData.sys.country).to.be.a(\"string\");",
+							"    } else {",
+							"        console.log(\"Warning: 'country' property is missing in the response.\");",
+							"    }",
+							"",
+							"    // Check for the presence of 'name'",
+							"    if (jsonData.name) {",
+							"        pm.expect(jsonData.name).to.be.a(\"string\");",
+							"    } else {",
+							"        console.log(\"Warning: 'name' property value is missing in the response.\");",
+							"    }",
+							"});",
+							"",
+							"// Check if the coordinates in response match the input",
+							"pm.test(\"Coordinates in response match input\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.coord.lat).to.be.closeTo(-90, 0.1); // Allow a small margin (+ OR -)",
+							"    pm.expect(jsonData.coord.lon).to.be.closeTo(-122.4194, 0.1);",
+							"});",
+							"",
+							"// Parse JSON response",
+							"var jsonData = pm.response.json();",
+							"",
+							"// Display the value of 'weather' property in the console",
+							"console.log(\"Weather:\", jsonData.weather);",
+							"",
+							"// Display temperature and humidity in the console",
+							"if (jsonData.main) {",
+							"    console.log(\"Temperature:\", jsonData.main.temp);",
+							"    console.log(\"Humidity:\", jsonData.main.humidity);",
+							"} else {",
+							"    console.log(\"Warning: 'main' property is missing in the response.\");",
+							"}",
+							"",
+							"// Display latitude and longitude values in the console",
+							"if (jsonData.coord) {",
+							"    console.log(\"Latitude:\", jsonData.coord.lat);",
+							"    console.log(\"Longitude:\", jsonData.coord.lon);",
+							"} else {",
+							"    console.log(\"Warning: 'coord' property is missing in the response.\");",
+							"}",
+							"",
+							"// Display the country and name values if they are present",
+							"if (jsonData.sys && jsonData.sys.country) {",
+							"    console.log(\"Country:\", jsonData.sys.country);",
+							"} else {",
+							"    console.log(\"Warning: 'country' property is missing in the response.\");",
+							"}",
+							"if (jsonData.name) {",
+							"    console.log(\"City Name:\", jsonData.name);",
+							"} else {",
+							"    console.log(\"Warning: 'name' property value is missing in the response.\");",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{OpenWeatherBaseURI}}?lat=-90&lon=-122.4194&appid=f02c145f34284f74189fe953e73412a1",
+					"host": [
+						"{{OpenWeatherBaseURI}}"
+					],
+					"query": [
+						{
+							"key": "lat",
+							"value": "-90"
+						},
+						{
+							"key": "lon",
+							"value": "-122.4194"
+						},
+						{
+							"key": "appid",
+							"value": "f02c145f34284f74189fe953e73412a1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Weather Data - Boundary Longitude Values (Case_1)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test if the status code is 200 (Success)",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Test if response format is JSON",
+							"pm.test(\"Response is JSON\", function () {",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"// Parse JSON response",
+							"var jsonData = pm.response.json();",
+							"",
+							"// Test if response contains weather data",
+							"pm.test(\"Response contains weather data\", function () {",
+							"    pm.expect(jsonData).to.have.property(\"weather\");",
+							"    pm.expect(jsonData).to.have.property(\"main\");",
+							"    pm.expect(jsonData.main).to.have.property(\"temp\");",
+							"    pm.expect(jsonData.main).to.have.property(\"humidity\");",
+							"",
+							"    // Check for the presence of 'country' in 'sys'",
+							"    if (jsonData.sys && jsonData.sys.hasOwnProperty(\"country\")) {",
+							"        pm.expect(jsonData.sys.country).to.be.a(\"string\");",
+							"    } else {",
+							"        console.log(\"Warning: 'country' property is missing in the response.\");",
+							"    }",
+							"",
+							"    // Check for the presence of 'name'",
+							"    if (jsonData.name) {",
+							"        pm.expect(jsonData.name).to.be.a(\"string\");",
+							"    } else {",
+							"        console.log(\"Warning: 'name' property value is missing in the response.\");",
+							"    }",
+							"});",
+							"",
+							"// Check if the coordinates in response match the input",
+							"pm.test(\"Coordinates in response match input\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.coord.lat).to.be.closeTo(37.7749, 0.1); // Allow a small margin (+ OR -)",
+							"    pm.expect(jsonData.coord.lon).to.be.closeTo(180, 0.1);",
+							"});",
+							"",
+							"// Parse JSON response",
+							"var jsonData = pm.response.json();",
+							"",
+							"// Display the value of 'weather' property in the console",
+							"console.log(\"Weather:\", jsonData.weather);",
+							"",
+							"// Display temperature and humidity in the console",
+							"if (jsonData.main) {",
+							"    console.log(\"Temperature:\", jsonData.main.temp);",
+							"    console.log(\"Humidity:\", jsonData.main.humidity);",
+							"} else {",
+							"    console.log(\"Warning: 'main' property is missing in the response.\");",
+							"}",
+							"",
+							"// Display latitude and longitude values in the console",
+							"if (jsonData.coord) {",
+							"    console.log(\"Latitude:\", jsonData.coord.lat);",
+							"    console.log(\"Longitude:\", jsonData.coord.lon);",
+							"} else {",
+							"    console.log(\"Warning: 'coord' property is missing in the response.\");",
+							"}",
+							"",
+							"// Display the country and name values if they are present",
+							"if (jsonData.sys && jsonData.sys.country) {",
+							"    console.log(\"Country:\", jsonData.sys.country);",
+							"} else {",
+							"    console.log(\"Warning: 'country' property is missing in the response.\");",
+							"}",
+							"if (jsonData.name) {",
+							"    console.log(\"City Name:\", jsonData.name);",
+							"} else {",
+							"    console.log(\"Warning: 'name' property value is missing in the response.\");",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{OpenWeatherBaseURI}}?lat=37.7749&lon=180&appid=f02c145f34284f74189fe953e73412a1",
+					"host": [
+						"{{OpenWeatherBaseURI}}"
+					],
+					"query": [
+						{
+							"key": "lat",
+							"value": "37.7749"
+						},
+						{
+							"key": "lon",
+							"value": "180"
+						},
+						{
+							"key": "appid",
+							"value": "f02c145f34284f74189fe953e73412a1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Weather Data - Boundary Longitude Values (Case_2)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test if the status code is 200 (Success)",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Test if response format is JSON",
+							"pm.test(\"Response is JSON\", function () {",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"// Parse JSON response",
+							"var jsonData = pm.response.json();",
+							"",
+							"// Test if response contains weather data",
+							"pm.test(\"Response contains weather data\", function () {",
+							"    pm.expect(jsonData).to.have.property(\"weather\");",
+							"    pm.expect(jsonData).to.have.property(\"main\");",
+							"    pm.expect(jsonData.main).to.have.property(\"temp\");",
+							"    pm.expect(jsonData.main).to.have.property(\"humidity\");",
+							"",
+							"    // Check for the presence of 'country' in 'sys'",
+							"    if (jsonData.sys && jsonData.sys.hasOwnProperty(\"country\")) {",
+							"        pm.expect(jsonData.sys.country).to.be.a(\"string\");",
+							"    } else {",
+							"        console.log(\"Warning: 'country' property is missing in the response.\");",
+							"    }",
+							"",
+							"    // Check for the presence of 'name'",
+							"    if (jsonData.name) {",
+							"        pm.expect(jsonData.name).to.be.a(\"string\");",
+							"    } else {",
+							"        console.log(\"Warning: 'name' property value is missing in the response.\");",
+							"    }",
+							"});",
+							"",
+							"// Check if the coordinates in response match the input",
+							"pm.test(\"Coordinates in response match input\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.coord.lat).to.be.closeTo(37.7749, 0.1); // Allow a small margin (+ OR -)",
+							"    pm.expect(jsonData.coord.lon).to.be.closeTo(-180, 0.1);",
+							"});",
+							"",
+							"// Parse JSON response",
+							"var jsonData = pm.response.json();",
+							"",
+							"// Display the value of 'weather' property in the console",
+							"console.log(\"Weather:\", jsonData.weather);",
+							"",
+							"// Display temperature and humidity in the console",
+							"if (jsonData.main) {",
+							"    console.log(\"Temperature:\", jsonData.main.temp);",
+							"    console.log(\"Humidity:\", jsonData.main.humidity);",
+							"} else {",
+							"    console.log(\"Warning: 'main' property is missing in the response.\");",
+							"}",
+							"",
+							"// Display latitude and longitude values in the console",
+							"if (jsonData.coord) {",
+							"    console.log(\"Latitude:\", jsonData.coord.lat);",
+							"    console.log(\"Longitude:\", jsonData.coord.lon);",
+							"} else {",
+							"    console.log(\"Warning: 'coord' property is missing in the response.\");",
+							"}",
+							"",
+							"// Display the country and name values if they are present",
+							"if (jsonData.sys && jsonData.sys.country) {",
+							"    console.log(\"Country:\", jsonData.sys.country);",
+							"} else {",
+							"    console.log(\"Warning: 'country' property is missing in the response.\");",
+							"}",
+							"if (jsonData.name) {",
+							"    console.log(\"City Name:\", jsonData.name);",
+							"} else {",
+							"    console.log(\"Warning: 'name' property value is missing in the response.\");",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{OpenWeatherBaseURI}}?lat=37.7749&lon=-180&appid=f02c145f34284f74189fe953e73412a1",
+					"host": [
+						"{{OpenWeatherBaseURI}}"
+					],
+					"query": [
+						{
+							"key": "lat",
+							"value": "37.7749"
+						},
+						{
+							"key": "lon",
+							"value": "-180"
+						},
+						{
+							"key": "appid",
+							"value": "f02c145f34284f74189fe953e73412a1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Weather Data - Missing Latitude Parameter",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test if the response status is 400 (Bad Request)",
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"// Test if the response contains an error message indicating missing latitude",
+							"pm.test(\"Response contains error message for missing latitude\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"message\"); // Checking if there's an error message",
+							"    pm.expect(jsonData.message).to.include(\"Nothing to geocode\"); // Verifying that the message includes 'lat' indicating missing latitude",
+							"});",
+							"",
+							"// Optionally, log the full response body to the console for debugging",
+							"console.log(\"Response Body:\", pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{OpenWeatherBaseURI}}?lat=&lon=-122.4194&appid=f02c145f34284f74189fe953e73412a1",
+					"host": [
+						"{{OpenWeatherBaseURI}}"
+					],
+					"query": [
+						{
+							"key": "lat",
+							"value": ""
+						},
+						{
+							"key": "lon",
+							"value": "-122.4194"
+						},
+						{
+							"key": "appid",
+							"value": "f02c145f34284f74189fe953e73412a1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Weather Data - Missing Longitude Parameter",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test if the response status is 400 (Bad Request)",
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"// Test if the response contains an error message indicating missing latitude",
+							"pm.test(\"Response contains error message for missing latitude\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"message\"); // Checking if there's an error message",
+							"    pm.expect(jsonData.message).to.include(\"Nothing to geocode\"); // Verifying that the message includes 'lat' indicating missing latitude",
+							"});",
+							"",
+							"// Optionally, log the full response body to the console for debugging",
+							"console.log(\"Response Body:\", pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{OpenWeatherBaseURI}}?lat=37.7749&lon=&appid=f02c145f34284f74189fe953e73412a1",
+					"host": [
+						"{{OpenWeatherBaseURI}}"
+					],
+					"query": [
+						{
+							"key": "lat",
+							"value": "37.7749"
+						},
+						{
+							"key": "lon",
+							"value": ""
+						},
+						{
+							"key": "appid",
+							"value": "f02c145f34284f74189fe953e73412a1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Weather Data - Invalid API Key",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test if the response status is 401 (Unauthorized)",
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});",
+							"",
+							"// Test if the response contains an error message for invalid API key",
+							"pm.test(\"Response contains error message for invalid API key\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"message\"); // Checking if there's an error message",
+							"    pm.expect(jsonData.message).to.include(\"Invalid API key\"); // Verifying that the message includes 'Invalid API key'",
+							"});",
+							"",
+							"// Optionally, log the full response body to the console for debugging",
+							"console.log(\"Response Body:\", pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{OpenWeatherBaseURI}}?lat=37.7749&lon=-122.4194&appid=f02c145f34284f74189fe953e73412a2",
+					"host": [
+						"{{OpenWeatherBaseURI}}"
+					],
+					"query": [
+						{
+							"key": "lat",
+							"value": "37.7749"
+						},
+						{
+							"key": "lon",
+							"value": "-122.4194"
+						},
+						{
+							"key": "appid",
+							"value": "f02c145f34284f74189fe953e73412a2"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
